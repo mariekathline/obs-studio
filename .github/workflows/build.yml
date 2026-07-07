@@ -1,0 +1,28 @@
+name: Build OBS Browser Windows
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout obs-studio
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build OBS Studio
+        run: |
+          .github/scripts/Build-Windows.ps1 -Target x64 -Configuration RelWithDebInfo
+        shell: pwsh
+
+      - name: Upload obs-browser artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: obs-browser-windows
+          path: |
+            build_x64/rundir/RelWithDebInfo/obs-plugins/64bit/obs-browser.dll
+            build_x64/rundir/RelWithDebInfo/obs-plugins/64bit/obs-browser-page.exe
